@@ -1,2 +1,2 @@
-release: pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
-web: gunicorn escola_api.wsgi:application
+release: python manage.py migrate
+web: gunicorn --pythonpath escola_api escola_api.wsgi:application
