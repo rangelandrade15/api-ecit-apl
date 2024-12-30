@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from urllib.parse import urlparse
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,24 +60,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'escola_api.wsgi.application'
 
 # Database configuration
-if os.getenv('RAILWAY_ENVIRONMENT', '') == 'production':
-    # Production database URL (Railway internal)
-    db_url = 'mysql://root:HDfuCKKDNjlkzbGQVEnQldPOIJjgsoIe@mysql.railway.internal:3306/railway'
-else:
-    # Local development database URL (Railway external)
-    db_url = 'mysql://root:HDfuCKKDNjlkzbGQVEnQldPOIJjgsoIe@autorack.proxy.rlwy.net:52473/railway'
-
-db_info = urlparse(db_url)
-
+DATABASE_URL = os.getenv('DATABASE_URL', 'mysql://root:HDfuCKKDNjlkzbGQVEnQldPOIJjgsoIe@autorack.proxy.rlwy.net:52473/railway')
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': db_info.path[1:],
-        'USER': db_info.username,
-        'PASSWORD': db_info.password,
-        'HOST': db_info.hostname,
-        'PORT': db_info.port,
-    }
+    'default': dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
